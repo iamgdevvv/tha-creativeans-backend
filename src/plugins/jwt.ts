@@ -5,7 +5,6 @@ const JWTPayloadModel = t.Object({
 	userId: t.String({
 		format: 'uuid',
 	}),
-	authType: t.UnionEnum(['auth', 'oauth-google']),
 });
 
 export type JWTPayloadModelSpec = UnwrapSchema<typeof JWTPayloadModel> & JWTPayloadSpec;

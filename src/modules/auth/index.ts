@@ -1,5 +1,4 @@
-import { Elysia } from 'elysia';
-import { UnauthorizedException } from 'elysia-http-exception';
+import { Elysia, t } from 'elysia';
 
 import { errorPlugin } from '#plugins/error';
 import { jwtPlugin } from '#plugins/jwt';
@@ -13,16 +12,17 @@ export const AuthModules = new Elysia()
 	.use(jwtPlugin)
 	.use(oauthPlugin)
 	.get('/auth/login/google', ({ oauth2 }) => oauth2.redirect('Google', ['profile', 'email']))
-	.post(
+	.get(
 		'/auth/oauth/google',
-		async ({ jwt, oauth2 }) => {
+		async ({ jwt, oauth2, query, redirect }) => {
 			let accessToken: string | null = null;
 
 			try {
 				const oauthToken = await oauth2.authorize('Google');
 				accessToken = oauthToken.accessToken();
-			} catch {
-				throw new UnauthorizedException('Invalid access token');
+			} catch (error) {
+				console.error('auth/oauth/google oauthToken', error);
+				return redirect(query.errorRedirectUrl, 307);
 			}
 
 			let userInfo: {
@@ -36,6 +36,12 @@ export const AuthModules = new Elysia()
 						Authorization: 'Bearer ' + accessToken,
 					},
 				});
+
+				if (!queryUserInfo.ok) {
+					console.error('auth/oauth/google queryUserInfo', queryUserInfo);
+					return redirect(query.errorRedirectUrl, 307);
+				}
+
 				const resultUserInfo = (await queryUserInfo.json()) as object;
 
 				if ('email' in resultUserInfo && typeof resultUserInfo.email === 'string') {
@@ -50,34 +56,39 @@ export const AuthModules = new Elysia()
 						name: userName,
 					};
 				}
-			} catch {
-				throw new UnauthorizedException('Provided access token is invalid');
+			} catch (error) {
+				console.error('auth/oauth/google resultUserInfo', error);
+				return redirect(query.errorRedirectUrl, 307);
 			}
+
 			if (!userInfo) {
-				throw new UnauthorizedException('User oauth not found');
+				console.error('auth/oauth/google userInfo', userInfo);
+				return redirect(query.errorRedirectUrl, 307);
 			}
 
-			const result = await handlerLoginOauth(userInfo);
+			try {
+				const result = await handlerLoginOauth(userInfo);
 
-			const token = await jwt.sign({
-				userId: result.id,
-				authType: 'auth',
-				exp: '12h',
-			});
+				const token = await jwt.sign({
+					userId: result.id,
+					exp: '12h',
+				});
 
-			return Response.json({
-				code: 'success',
-				message: 'Success login',
-				statusCode: 200,
-				token,
-				data: result,
-			} satisfies ResponseAuthModelType['oauth']);
+				const clientUrl = new URL(query.redirectUrl);
+
+				clientUrl.searchParams.set('token', token);
+
+				return redirect(clientUrl.toString(), 307);
+			} catch (error) {
+				console.error('auth/oauth/google handlerLoginOauth', error);
+				return redirect(query.errorRedirectUrl, 307);
+			}
 		},
 		{
 			query: AuthModel.oauth,
 			response: {
 				...errorPlugin.decorator.ctxError.model([400, 401, 500]),
-				200: ResponseAuthModel.oauth,
+				307: t.String(),
 			},
 		},
 	)
@@ -88,7 +99,6 @@ export const AuthModules = new Elysia()
 
 			const token = await jwt.sign({
 				userId: user.id,
-				authType: 'auth',
 				exp: '12h',
 			});
 

@@ -120,10 +120,6 @@ export const handlerJwtAuth = async (
 		throw new UnauthorizedException('Bearer token is invalid');
 	}
 
-	if (authJwt.authType === 'oauth-google') {
-		// fetch user info
-	}
-
 	if (authJwt.exp && dayjs(authJwt.exp * 1000).isBefore(dayjs())) {
 		throw new UnauthorizedException('Bearer token is expired');
 	}

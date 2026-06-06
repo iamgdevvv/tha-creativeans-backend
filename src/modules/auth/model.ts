@@ -21,11 +21,8 @@ export const AuthModel = {
 		}),
 	]),
 	oauth: t.Object({
-		state: t.Optional(t.String()),
-		code: t.String(),
-		scope: t.Optional(t.String()),
-		authuser: t.Optional(t.String()),
-		prompt: t.Optional(t.String()),
+		redirectUrl: t.String(),
+		errorRedirectUrl: t.String(),
 	}),
 } as const;
 

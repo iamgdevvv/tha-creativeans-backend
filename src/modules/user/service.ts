@@ -1,4 +1,8 @@
-import { ForbiddenException, UnauthorizedException } from 'elysia-http-exception';
+import {
+	BadRequestException,
+	ForbiddenException,
+	UnauthorizedException,
+} from 'elysia-http-exception';
 
 import { Prisma } from '#generated/prisma/client';
 import { prisma } from '#libs/prisma';
@@ -135,6 +139,59 @@ export const handlerUser = async (
 	};
 
 	return await prisma.user.findUniqueOrThrow(args);
+};
+
+export const handlerUserMe = async (
+	recordId: UserModelType['params']['id'],
+): Promise<ResponseUserModelType['me']['data']> => {
+	const { auth, ...user } = await prisma.user.findUniqueOrThrow({
+		where: {
+			id: recordId,
+		},
+		select: {
+			name: true,
+			email: true,
+			role: true,
+			auth: {
+				select: {
+					hash: true,
+				},
+			},
+		},
+	});
+
+	return {
+		...user,
+		hasAuth: !!auth,
+	};
+};
+
+export const handlerUserMePassword = async (
+	recordId: UserModelType['params']['id'],
+	payload: UserModelType['updatePassword'],
+) => {
+	const authRecord = await prisma.auth.findUnique({
+		where: {
+			userId: recordId,
+		},
+		select: {
+			salt: true,
+		},
+	});
+
+	if (authRecord) throw new BadRequestException('Auth created');
+
+	const salt = encrypt(payload.password);
+
+	const hash = encrypt(payload.password, salt);
+
+	return await prisma.auth.create({
+		data: {
+			salt,
+			hash,
+			userId: recordId,
+		},
+	});
 };
 
 export const handlerCreateUser = async (

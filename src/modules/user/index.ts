@@ -14,6 +14,8 @@ import {
 	handlerUpdateUserProfile,
 	handlerUpdateUserProfilePassword,
 	handlerUser,
+	handlerUserMe,
+	handlerUserMePassword,
 	handlerUsers,
 } from './service';
 
@@ -26,9 +28,7 @@ export const UserModules = new Elysia()
 				bearerToken: headers.authorization,
 			});
 
-			const user = await handlerUser(authUser.userId, {
-				select: ['name', 'email', 'role'],
-			});
+			const user = await handlerUserMe(authUser.userId);
 
 			return Response.json({
 				code: 'success',
@@ -41,6 +41,36 @@ export const UserModules = new Elysia()
 			response: {
 				...errorPlugin.decorator.ctxError.model(),
 				200: ResponseUserModel.me,
+			},
+			detail: {
+				security: [
+					{
+						bearerAuth: [],
+					},
+				],
+			},
+		},
+	)
+	.post(
+		'/users/me/password',
+		async ({ headers, jwt, body }) => {
+			const authUser = await handlerJwtAuth(jwt.verify, {
+				bearerToken: headers.authorization,
+			});
+
+			await handlerUserMePassword(authUser.userId, body);
+
+			return Response.json({
+				code: 'success',
+				message: 'Success set password',
+				statusCode: 200,
+			} satisfies ResponseUserModelType['updatePassword']);
+		},
+		{
+			body: UserModel.updatePassword,
+			response: {
+				...errorPlugin.decorator.ctxError.model(),
+				200: ResponseUserModel.updatePassword,
 			},
 			detail: {
 				security: [

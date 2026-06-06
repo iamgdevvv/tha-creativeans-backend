@@ -25,7 +25,12 @@ export const ResponseUserModel = {
 		statusCode: 200,
 	}),
 	me: ResponseModel({
-		data: t.Pick(UserPlain, ['name', 'email', 'role']),
+		data: t.Composite([
+			t.Pick(UserPlain, ['name', 'email', 'role']),
+			t.Object({
+				hasAuth: t.Boolean(),
+			}),
+		]),
 	}),
 } as const;
 
