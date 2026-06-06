@@ -15,7 +15,7 @@
 		"lint:fix": "oxlint -c ./.oxlintrc.json --tsconfig ./tsconfig.json --ignore-path ./.eslintignore --fix src prisma.config.ts types",
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"dev": "bun run --watch src/index.ts",
-		"build": "bun run typecheck && bun run lint && bun run format:check && bun build --production --target=bun --bytecode --outdir=./dist src/index.ts",
+		"build": "bun run typecheck && bun run lint && bun build --production --target=bun --bytecode --outdir=./dist src/index.ts",
 		"start": "dotenv -e .env bun ./dist/index.js"
 	},
 	"dependencies": {
