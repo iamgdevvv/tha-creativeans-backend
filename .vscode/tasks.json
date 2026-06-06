@@ -1,0 +1,19 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Lint (oxlint)",
+			"type": "shell",
+			"command": "bun run lint",
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "Format (oxfmt)",
+			"type": "shell",
+			"command": "bun run format",
+			"group": "build",
+			"problemMatcher": []
+		}
+	]
+}

@@ -1,0 +1,35 @@
+{
+	"$schema": "./node_modules/oxlint/configuration_schema.json",
+	"plugins": ["import", "typescript", "unicorn", "oxc"],
+	"env": {
+		"builtin": true,
+		"node": true
+	},
+	"ignorePatterns": [".agents/**", "dist/**", "logs/**", "node_modules/**", ".tmp/**", "src/generated/**"],
+	"categories": {
+		"correctness": "error",
+		"suspicious": "warn"
+	},
+	"rules": {
+		"no-debugger": "error",
+		"no-console": "off",
+		"no-underscore-dangle": "off",
+		"no-shadow": "warn",
+		"no-unused-vars": "warn",
+		"no-useless-catch": "warn",
+		"no-extra-boolean-cast": "warn",
+		"no-unreachable": "warn",
+		"unicorn/filename-case": "off",
+		"unicorn/no-empty-file": "off",
+		"unicorn/no-useless-fallback-in-spread": "warn",
+		"import/no-unassigned-import": "off",
+		"import/no-named-as-default": "off"
+	},
+	"settings": {
+		"import/resolver": {
+			"typescript": {
+				"project": "./tsconfig.json"
+			}
+		}
+	}
+}

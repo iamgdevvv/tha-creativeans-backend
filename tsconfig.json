@@ -1,0 +1,36 @@
+{
+	"compilerOptions": {
+		"jsx": "react",
+		"verbatimModuleSyntax": true,
+		"target": "ESNext",
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"types": ["bun-types"],
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"strict": true,
+		"noImplicitAny": true,
+		"strictNullChecks": true,
+		"strictFunctionTypes": true,
+		"strictBindCallApply": true,
+		"strictPropertyInitialization": true,
+		"noImplicitThis": true,
+		"useUnknownInCatchVariables": true,
+		"alwaysStrict": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noFallthroughCasesInSwitch": true,
+		"noUncheckedIndexedAccess": true,
+		"noImplicitOverride": true,
+		"skipLibCheck": true,
+		"ignoreDeprecations": "6.0",
+		"baseUrl": "./",
+		"paths": {
+			"#generated/*": ["./src/generated/*"],
+			"#modules/*": ["./src/modules/*"],
+			"#utils/*": ["./src/utils/*"],
+			"#plugins/*": ["src/plugins/*"],
+			"#libs/*": ["src/libs/*"]
+		}
+	}
+}
