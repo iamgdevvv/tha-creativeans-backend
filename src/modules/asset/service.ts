@@ -33,16 +33,14 @@ export const handerAsset = async (params: AssetModelType['params']) => {
 export const handlerAssets = async (
 	queryParams?: QueryParamAssets,
 ): Promise<Pick<ResponseAssetModelType['assets'], 'data' | 'total'>> => {
-	const { limit, skip, q, desc, asc, authRole, authId, ...payload } =
-		(queryParams || {}) as QueryParamAssets;
+	const { limit, skip, q, desc, asc, authRole, authId, ...payload } = (queryParams ||
+		{}) as QueryParamAssets;
 
 	const argsWhereOR: Prisma.AssetWhereInput[] = [];
 	const argsOrderBy: Prisma.AssetOrderByWithRelationInput[] = [];
 
 	if (q) {
-		const searchFields: Prisma.AssetOrderByRelevanceFieldEnum[] = [
-			'filename',
-		];
+		const searchFields: Prisma.AssetOrderByRelevanceFieldEnum[] = ['filename'];
 
 		searchFields.forEach((field) => {
 			argsWhereOR.push({

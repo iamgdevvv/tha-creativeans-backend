@@ -41,7 +41,7 @@ package-lock.json
 
 .tmp
 
-prisma
+/prisma/
 !prisma/schema.prisma
 
 dist
