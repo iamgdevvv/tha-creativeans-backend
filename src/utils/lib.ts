@@ -24,6 +24,23 @@ export const encrypt = (
 	).toString('hex');
 };
 
+export const hashCreds = async (creds: string) =>
+	await Bun.password.hash(creds, {
+		algorithm: 'bcrypt',
+		cost: 4,
+	});
+
+export const verifyCreds = async (creds: string, hash: string) => {
+	try {
+		await Bun.password.verify(creds, hash, 'bcrypt');
+
+		return true;
+	} catch (error) {
+		console.error(error);
+		return false;
+	}
+};
+
 export const valueOrSkip = <T>(value?: T | null | undefined): T | typeof Prisma.skip => {
 	return value ?? Prisma.skip;
 };

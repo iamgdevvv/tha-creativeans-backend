@@ -10,7 +10,7 @@ import { prisma } from '#libs/prisma';
 import { handlerCreateUser } from '#modules/user/service';
 import type { JWTPayloadModelSpec } from '#plugins/jwt';
 import dayjs from '#utils/dayjs';
-import { encrypt } from '#utils/lib';
+import { verifyCreds } from '#utils/lib';
 
 import type { AuthModelType } from './model';
 import type { ResponseAuthModelType } from './response.model';
@@ -51,7 +51,6 @@ export const handlerLoginAuth = async (
 		include: {
 			auth: {
 				select: {
-					salt: true,
 					hash: true,
 				},
 			},
@@ -68,9 +67,9 @@ export const handlerLoginAuth = async (
 		throw new NotImplementedException('Auth is not implemented');
 	}
 
-	const hash = encrypt(payload.password, auth.salt);
+	const isPasswordMatch = await verifyCreds(payload.password, auth.hash);
 
-	if (hash !== auth.hash) {
+	if (!isPasswordMatch) {
 		throw new UnauthorizedException('Credentials are invalid');
 	}
 
@@ -148,9 +147,7 @@ export const handlerJwtAuth = async (
 				const product = await prisma.product.findUnique({
 					where: {
 						id: productId,
-						config: {
-							userId: authJwt.userId,
-						},
+						userId: authJwt.userId,
 					},
 					select: {
 						id: true,

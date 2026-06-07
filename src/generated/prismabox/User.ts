@@ -24,13 +24,7 @@ export const UserRelations = t.Object(
   {
     auth: __nullable__(
       t.Object(
-        {
-          hash: t.String(),
-          salt: t.String(),
-          createdAt: t.Date(),
-          updatedAt: t.Date(),
-          userId: t.String(),
-        },
+        { hash: t.String(), userId: t.String() },
         { additionalProperties: false },
       ),
     ),

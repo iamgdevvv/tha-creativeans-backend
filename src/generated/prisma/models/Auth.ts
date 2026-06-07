@@ -26,25 +26,16 @@ export type AggregateAuth = {
 
 export type AuthMinAggregateOutputType = {
   hash: string | null
-  salt: string | null
-  createdAt: Date | null
-  updatedAt: Date | null
   userId: string | null
 }
 
 export type AuthMaxAggregateOutputType = {
   hash: string | null
-  salt: string | null
-  createdAt: Date | null
-  updatedAt: Date | null
   userId: string | null
 }
 
 export type AuthCountAggregateOutputType = {
   hash: number
-  salt: number
-  createdAt: number
-  updatedAt: number
   userId: number
   _all: number
 }
@@ -52,25 +43,16 @@ export type AuthCountAggregateOutputType = {
 
 export type AuthMinAggregateInputType = {
   hash?: true | runtime.Types.Skip
-  salt?: true | runtime.Types.Skip
-  createdAt?: true | runtime.Types.Skip
-  updatedAt?: true | runtime.Types.Skip
   userId?: true | runtime.Types.Skip
 }
 
 export type AuthMaxAggregateInputType = {
   hash?: true | runtime.Types.Skip
-  salt?: true | runtime.Types.Skip
-  createdAt?: true | runtime.Types.Skip
-  updatedAt?: true | runtime.Types.Skip
   userId?: true | runtime.Types.Skip
 }
 
 export type AuthCountAggregateInputType = {
   hash?: true | runtime.Types.Skip
-  salt?: true | runtime.Types.Skip
-  createdAt?: true | runtime.Types.Skip
-  updatedAt?: true | runtime.Types.Skip
   userId?: true | runtime.Types.Skip
   _all?: true | runtime.Types.Skip
 }
@@ -149,9 +131,6 @@ export type AuthGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
 
 export type AuthGroupByOutputType = {
   hash: string
-  salt: string
-  createdAt: Date
-  updatedAt: Date
   userId: string
   _count: AuthCountAggregateOutputType | null
   _min: AuthMinAggregateOutputType | null
@@ -178,18 +157,12 @@ export type AuthWhereInput = {
   OR?: Prisma.AuthWhereInput[] | runtime.Types.Skip
   NOT?: Prisma.AuthWhereInput | Prisma.AuthWhereInput[] | runtime.Types.Skip
   hash?: Prisma.StringFilter<"Auth"> | string | runtime.Types.Skip
-  salt?: Prisma.StringFilter<"Auth"> | string | runtime.Types.Skip
-  createdAt?: Prisma.DateTimeFilter<"Auth"> | Date | string | runtime.Types.Skip
-  updatedAt?: Prisma.DateTimeFilter<"Auth"> | Date | string | runtime.Types.Skip
   userId?: Prisma.StringFilter<"Auth"> | string | runtime.Types.Skip
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput> | runtime.Types.Skip
 }
 
 export type AuthOrderByWithRelationInput = {
   hash?: Prisma.SortOrder | runtime.Types.Skip
-  salt?: Prisma.SortOrder | runtime.Types.Skip
-  createdAt?: Prisma.SortOrder | runtime.Types.Skip
-  updatedAt?: Prisma.SortOrder | runtime.Types.Skip
   userId?: Prisma.SortOrder | runtime.Types.Skip
   user?: Prisma.UserOrderByWithRelationInput | runtime.Types.Skip
   _relevance?: Prisma.AuthOrderByRelevanceInput | runtime.Types.Skip
@@ -201,17 +174,11 @@ export type AuthWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.AuthWhereInput[] | runtime.Types.Skip
   NOT?: Prisma.AuthWhereInput | Prisma.AuthWhereInput[] | runtime.Types.Skip
   hash?: Prisma.StringFilter<"Auth"> | string | runtime.Types.Skip
-  salt?: Prisma.StringFilter<"Auth"> | string | runtime.Types.Skip
-  createdAt?: Prisma.DateTimeFilter<"Auth"> | Date | string | runtime.Types.Skip
-  updatedAt?: Prisma.DateTimeFilter<"Auth"> | Date | string | runtime.Types.Skip
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput> | runtime.Types.Skip
 }, "userId">
 
 export type AuthOrderByWithAggregationInput = {
   hash?: Prisma.SortOrder | runtime.Types.Skip
-  salt?: Prisma.SortOrder | runtime.Types.Skip
-  createdAt?: Prisma.SortOrder | runtime.Types.Skip
-  updatedAt?: Prisma.SortOrder | runtime.Types.Skip
   userId?: Prisma.SortOrder | runtime.Types.Skip
   _count?: Prisma.AuthCountOrderByAggregateInput | runtime.Types.Skip
   _max?: Prisma.AuthMaxOrderByAggregateInput | runtime.Types.Skip
@@ -223,64 +190,40 @@ export type AuthScalarWhereWithAggregatesInput = {
   OR?: Prisma.AuthScalarWhereWithAggregatesInput[] | runtime.Types.Skip
   NOT?: Prisma.AuthScalarWhereWithAggregatesInput | Prisma.AuthScalarWhereWithAggregatesInput[] | runtime.Types.Skip
   hash?: Prisma.StringWithAggregatesFilter<"Auth"> | string | runtime.Types.Skip
-  salt?: Prisma.StringWithAggregatesFilter<"Auth"> | string | runtime.Types.Skip
-  createdAt?: Prisma.DateTimeWithAggregatesFilter<"Auth"> | Date | string | runtime.Types.Skip
-  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Auth"> | Date | string | runtime.Types.Skip
   userId?: Prisma.StringWithAggregatesFilter<"Auth"> | string | runtime.Types.Skip
 }
 
 export type AuthCreateInput = {
   hash: string
-  salt: string
-  createdAt?: Date | string | runtime.Types.Skip
-  updatedAt?: Date | string | runtime.Types.Skip
   user: Prisma.UserCreateNestedOneWithoutAuthInput
 }
 
 export type AuthUncheckedCreateInput = {
   hash: string
-  salt: string
-  createdAt?: Date | string | runtime.Types.Skip
-  updatedAt?: Date | string | runtime.Types.Skip
   userId: string
 }
 
 export type AuthUpdateInput = {
   hash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  salt?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   user?: Prisma.UserUpdateOneRequiredWithoutAuthNestedInput | runtime.Types.Skip
 }
 
 export type AuthUncheckedUpdateInput = {
   hash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  salt?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   userId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
 }
 
 export type AuthCreateManyInput = {
   hash: string
-  salt: string
-  createdAt?: Date | string | runtime.Types.Skip
-  updatedAt?: Date | string | runtime.Types.Skip
   userId: string
 }
 
 export type AuthUpdateManyMutationInput = {
   hash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  salt?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
 
 export type AuthUncheckedUpdateManyInput = {
   hash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  salt?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   userId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
 }
 
@@ -297,25 +240,16 @@ export type AuthOrderByRelevanceInput = {
 
 export type AuthCountOrderByAggregateInput = {
   hash?: Prisma.SortOrder | runtime.Types.Skip
-  salt?: Prisma.SortOrder | runtime.Types.Skip
-  createdAt?: Prisma.SortOrder | runtime.Types.Skip
-  updatedAt?: Prisma.SortOrder | runtime.Types.Skip
   userId?: Prisma.SortOrder | runtime.Types.Skip
 }
 
 export type AuthMaxOrderByAggregateInput = {
   hash?: Prisma.SortOrder | runtime.Types.Skip
-  salt?: Prisma.SortOrder | runtime.Types.Skip
-  createdAt?: Prisma.SortOrder | runtime.Types.Skip
-  updatedAt?: Prisma.SortOrder | runtime.Types.Skip
   userId?: Prisma.SortOrder | runtime.Types.Skip
 }
 
 export type AuthMinOrderByAggregateInput = {
   hash?: Prisma.SortOrder | runtime.Types.Skip
-  salt?: Prisma.SortOrder | runtime.Types.Skip
-  createdAt?: Prisma.SortOrder | runtime.Types.Skip
-  updatedAt?: Prisma.SortOrder | runtime.Types.Skip
   userId?: Prisma.SortOrder | runtime.Types.Skip
 }
 
@@ -353,16 +287,10 @@ export type AuthUncheckedUpdateOneWithoutUserNestedInput = {
 
 export type AuthCreateWithoutUserInput = {
   hash: string
-  salt: string
-  createdAt?: Date | string | runtime.Types.Skip
-  updatedAt?: Date | string | runtime.Types.Skip
 }
 
 export type AuthUncheckedCreateWithoutUserInput = {
   hash: string
-  salt: string
-  createdAt?: Date | string | runtime.Types.Skip
-  updatedAt?: Date | string | runtime.Types.Skip
 }
 
 export type AuthCreateOrConnectWithoutUserInput = {
@@ -383,56 +311,38 @@ export type AuthUpdateToOneWithWhereWithoutUserInput = {
 
 export type AuthUpdateWithoutUserInput = {
   hash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  salt?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
 
 export type AuthUncheckedUpdateWithoutUserInput = {
   hash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  salt?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
 
 
 
 export type AuthSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   hash?: boolean | runtime.Types.Skip
-  salt?: boolean | runtime.Types.Skip
-  createdAt?: boolean | runtime.Types.Skip
-  updatedAt?: boolean | runtime.Types.Skip
   userId?: boolean | runtime.Types.Skip
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
 }, ExtArgs["result"]["auth"]>
 
 export type AuthSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   hash?: boolean | runtime.Types.Skip
-  salt?: boolean | runtime.Types.Skip
-  createdAt?: boolean | runtime.Types.Skip
-  updatedAt?: boolean | runtime.Types.Skip
   userId?: boolean | runtime.Types.Skip
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
 }, ExtArgs["result"]["auth"]>
 
 export type AuthSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   hash?: boolean | runtime.Types.Skip
-  salt?: boolean | runtime.Types.Skip
-  createdAt?: boolean | runtime.Types.Skip
-  updatedAt?: boolean | runtime.Types.Skip
   userId?: boolean | runtime.Types.Skip
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
 }, ExtArgs["result"]["auth"]>
 
 export type AuthSelectScalar = {
   hash?: boolean | runtime.Types.Skip
-  salt?: boolean | runtime.Types.Skip
-  createdAt?: boolean | runtime.Types.Skip
-  updatedAt?: boolean | runtime.Types.Skip
   userId?: boolean | runtime.Types.Skip
 }
 
-export type AuthOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"hash" | "salt" | "createdAt" | "updatedAt" | "userId", ExtArgs["result"]["auth"], runtime.Types.Skip>
+export type AuthOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"hash" | "userId", ExtArgs["result"]["auth"], runtime.Types.Skip>
 export type AuthInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
 }
@@ -450,9 +360,6 @@ export type $AuthPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     hash: string
-    salt: string
-    createdAt: Date
-    updatedAt: Date
     userId: string
   }, ExtArgs["result"]["auth"]>
   composites: {}
@@ -879,9 +786,6 @@ export interface Prisma__AuthClient<T, Null = never, ExtArgs extends runtime.Typ
  */
 export interface AuthFieldRefs {
   readonly hash: Prisma.FieldRef<"Auth", 'String'>
-  readonly salt: Prisma.FieldRef<"Auth", 'String'>
-  readonly createdAt: Prisma.FieldRef<"Auth", 'DateTime'>
-  readonly updatedAt: Prisma.FieldRef<"Auth", 'DateTime'>
   readonly userId: Prisma.FieldRef<"Auth", 'String'>
 }
     

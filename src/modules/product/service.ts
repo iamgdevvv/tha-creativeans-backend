@@ -10,7 +10,8 @@ import type { ResponseProductModelType } from './response.model';
 export const handlerProducts = async (
 	queryParams?: ProductModelType['queries'],
 ): Promise<Pick<ResponseProductModelType['products'], 'data' | 'total'>> => {
-	const { limit, skip, q, desc, asc, include, select, categories, ...payload } = queryParams || {};
+	const { limit, skip, q, desc, asc, include, select, categories, userEmail, ...payload } =
+		queryParams || {};
 
 	const argsWhereOR: Prisma.ProductWhereInput[] = [];
 	const argsOrderBy: Prisma.ProductOrderByWithRelationInput[] = [];
@@ -76,6 +77,11 @@ export const handlerProducts = async (
 			inStock: valueOrSkip(payload.inStock),
 			rating: valueOrSkip(payload.rating),
 			userId: valueOrSkip(payload.userId),
+			user: userEmail
+				? {
+						email: userEmail,
+					}
+				: Prisma.skip,
 			productCategories: categories?.length
 				? {
 						some: {

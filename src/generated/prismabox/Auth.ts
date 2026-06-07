@@ -5,13 +5,7 @@ import { __transformDate__ } from "./__transformDate__";
 import { __nullable__ } from "./__nullable__";
 
 export const AuthPlain = t.Object(
-  {
-    hash: t.String(),
-    salt: t.String(),
-    createdAt: t.Date(),
-    updatedAt: t.Date(),
-    userId: t.String(),
-  },
+  { hash: t.String(), userId: t.String() },
   { additionalProperties: false },
 );
 
@@ -45,9 +39,6 @@ export const AuthWhere = t.Partial(
           NOT: t.Union([Self, t.Array(Self, { additionalProperties: false })]),
           OR: t.Array(Self, { additionalProperties: false }),
           hash: t.String(),
-          salt: t.String(),
-          createdAt: t.Date(),
-          updatedAt: t.Date(),
           userId: t.String(),
         },
         { additionalProperties: false },
@@ -83,13 +74,7 @@ export const AuthWhereUnique = t.Recursive(
         ),
         t.Partial(
           t.Object(
-            {
-              hash: t.String(),
-              salt: t.String(),
-              createdAt: t.Date(),
-              updatedAt: t.Date(),
-              userId: t.String(),
-            },
+            { hash: t.String(), userId: t.String() },
             { additionalProperties: false },
           ),
         ),
@@ -103,9 +88,6 @@ export const AuthSelect = t.Partial(
   t.Object(
     {
       hash: t.Boolean(),
-      salt: t.Boolean(),
-      createdAt: t.Boolean(),
-      updatedAt: t.Boolean(),
       user: t.Boolean(),
       userId: t.Boolean(),
       _count: t.Boolean(),
@@ -125,15 +107,6 @@ export const AuthOrderBy = t.Partial(
   t.Object(
     {
       hash: t.Union([t.Literal("asc"), t.Literal("desc")], {
-        additionalProperties: false,
-      }),
-      salt: t.Union([t.Literal("asc"), t.Literal("desc")], {
-        additionalProperties: false,
-      }),
-      createdAt: t.Union([t.Literal("asc"), t.Literal("desc")], {
-        additionalProperties: false,
-      }),
-      updatedAt: t.Union([t.Literal("asc"), t.Literal("desc")], {
         additionalProperties: false,
       }),
       userId: t.Union([t.Literal("asc"), t.Literal("desc")], {

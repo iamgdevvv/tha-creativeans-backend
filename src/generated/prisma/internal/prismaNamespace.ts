@@ -995,9 +995,6 @@ export type RelationLoadStrategy = (typeof RelationLoadStrategy)[keyof typeof Re
 
 export const AuthScalarFieldEnum = {
   hash: 'hash',
-  salt: 'salt',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
   userId: 'userId'
 } as const
 
@@ -1081,7 +1078,6 @@ export type UserOrderByRelevanceFieldEnum = (typeof UserOrderByRelevanceFieldEnu
 
 export const AuthOrderByRelevanceFieldEnum = {
   hash: 'hash',
-  salt: 'salt',
   userId: 'userId'
 } as const
 

@@ -3,7 +3,7 @@ import { BadRequestException, ForbiddenException } from 'elysia-http-exception';
 import { Prisma } from '#generated/prisma/client';
 import { prisma } from '#libs/prisma';
 import dayjs from '#utils/dayjs';
-import { encrypt, valueOrSkip } from '#utils/lib';
+import { hashCreds, valueOrSkip, verifyCreds } from '#utils/lib';
 
 import type { UserModelType } from './model';
 import type { ResponseUserModelType } from './response.model';
@@ -150,7 +150,7 @@ export const handlerUserMe = async (
 			role: true,
 			auth: {
 				select: {
-					hash: true,
+					userId: true,
 				},
 			},
 		},
@@ -171,19 +171,16 @@ export const handlerUserMePassword = async (
 			userId: recordId,
 		},
 		select: {
-			salt: true,
+			userId: true,
 		},
 	});
 
 	if (authRecord) throw new BadRequestException('Auth created');
 
-	const salt = encrypt(payload.password);
-
-	const hash = encrypt(payload.password, salt);
+	const hash = await hashCreds(payload.password);
 
 	return await prisma.auth.create({
 		data: {
-			salt,
 			hash,
 			userId: recordId,
 		},
@@ -195,16 +192,13 @@ export const handlerCreateUser = async (
 ): Promise<ResponseUserModelType['user']['data']> => {
 	const { password, ...userPayload } = payload;
 
-	const salt = encrypt(password);
-
-	const hash = encrypt(password, salt);
+	const hash = await hashCreds(password);
 
 	return await prisma.user.create({
 		data: {
 			...userPayload,
 			auth: {
 				create: {
-					salt,
 					hash,
 				},
 			},
@@ -251,19 +245,16 @@ export const handlerUpdateUserPassword = async (
 			userId: recordId,
 		},
 		select: {
-			salt: true,
+			userId: true,
 		},
 	});
 
+	const hash = await hashCreds(payload.password);
+
 	if (!authRecord) {
-		const salt = encrypt(payload.password);
-
-		const hash = encrypt(payload.password, salt);
-
 		return await prisma.auth.create({
 			data: {
 				hash,
-				salt,
 				userId: recordId,
 			},
 			select: {
@@ -277,7 +268,7 @@ export const handlerUpdateUserPassword = async (
 			userId: recordId,
 		},
 		data: {
-			hash: encrypt(payload.password, authRecord.salt),
+			hash,
 		},
 		select: {
 			userId: true,
@@ -312,22 +303,23 @@ export const handlerUpdateUserProfilePassword = async (
 		},
 		select: {
 			hash: true,
-			salt: true,
 		},
 	});
 
-	const currentHash = encrypt(payload.password, authRecord.salt);
+	const isPasswordMatch = await verifyCreds(payload.password, authRecord.hash);
 
-	if (currentHash !== authRecord.hash) {
+	if (!isPasswordMatch) {
 		throw new ForbiddenException('Password is incorrect');
 	}
+
+	const hash = await hashCreds(payload.new_password);
 
 	return await prisma.auth.update({
 		where: {
 			userId: recordId,
 		},
 		data: {
-			hash: encrypt(payload.new_password, authRecord.salt),
+			hash,
 		},
 		select: {
 			userId: true,

@@ -46,6 +46,11 @@ export const ProductModel = {
 			]),
 		),
 		t.Object({
+			userEmail: t.Optional(
+				t.String({
+					format: 'email',
+				}),
+			),
 			categories: t.Optional(t.Array(CategoryPlain.properties.id)),
 			desc: t.Optional(
 				tEnumsModel<Product>([
