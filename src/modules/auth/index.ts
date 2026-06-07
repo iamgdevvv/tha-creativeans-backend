@@ -77,6 +77,7 @@ export const AuthModules = new Elysia()
 				const clientUrl = new URL(query.redirectUrl);
 
 				clientUrl.searchParams.set('token', token);
+				clientUrl.searchParams.set('role', result.role);
 
 				return redirect(clientUrl.toString(), 307);
 			} catch (error) {

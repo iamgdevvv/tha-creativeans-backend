@@ -1,8 +1,4 @@
-import {
-	BadRequestException,
-	ForbiddenException,
-	UnauthorizedException,
-} from 'elysia-http-exception';
+import { BadRequestException, ForbiddenException } from 'elysia-http-exception';
 
 import { Prisma } from '#generated/prisma/client';
 import { prisma } from '#libs/prisma';
@@ -259,7 +255,22 @@ export const handlerUpdateUserPassword = async (
 		},
 	});
 
-	if (!authRecord) throw new UnauthorizedException('Auth not found');
+	if (!authRecord) {
+		const salt = encrypt(payload.password);
+
+		const hash = encrypt(payload.password, salt);
+
+		return await prisma.auth.create({
+			data: {
+				hash,
+				salt,
+				userId: recordId,
+			},
+			select: {
+				userId: true,
+			},
+		});
+	}
 
 	return await prisma.auth.update({
 		where: {
