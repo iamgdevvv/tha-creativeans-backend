@@ -175,5 +175,5 @@ export const transpileFile = async (fileContent: string) => {
 };
 
 export const linkAsset = (path: string, fileName: string) => {
-	return `${process.env.BASE_URL}/assets/${path}/${fileName}`;
+	return `${process.env.BASE_URL}/api/assets/${path}/${fileName}`;
 };

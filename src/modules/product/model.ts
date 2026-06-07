@@ -6,7 +6,22 @@ import { CategoryPlain } from '#generated/prismabox/Category';
 import { ProductPlain, ProductRelations } from '#generated/prismabox/Product';
 import { tEnumsModel, tPickModel, tQueries } from '#utils/model/general';
 
-export type ProductRelationsType = UnwrapSchema<typeof ProductRelations>;
+export const ProductPublicPlain = t.Composite([
+	t.Pick(ProductPlain, [
+		'name',
+		'slug',
+		'price',
+		'description',
+		'rating',
+		'inStock',
+		'createdAt',
+		'updatedAt',
+	]),
+	t.Object({
+		thumbnails: t.Array(t.String()),
+		categories: t.Array(CategoryPlain),
+	}),
+]);
 
 const SelectIncludeModel = t.Object({
 	select: t.Optional(
@@ -28,6 +43,9 @@ const SelectIncludeModel = t.Object({
 	),
 });
 
+export type ProductPublic = UnwrapSchema<typeof ProductPublicPlain>;
+export type ProductRelationsType = UnwrapSchema<typeof ProductRelations>;
+
 export const ProductModel = {
 	params: tPickModel(ProductPlain, ['id', 'slug']),
 	queries: tQueries([
@@ -46,11 +64,6 @@ export const ProductModel = {
 			]),
 		),
 		t.Object({
-			userEmail: t.Optional(
-				t.String({
-					format: 'email',
-				}),
-			),
 			categories: t.Optional(t.Array(CategoryPlain.properties.id)),
 			desc: t.Optional(
 				tEnumsModel<Product>([
@@ -81,6 +94,47 @@ export const ProductModel = {
 		}),
 	]),
 	query: SelectIncludeModel,
+	queriesPublic: tQueries([
+		t.Partial(
+			tPickModel(ProductPlain, [
+				'name',
+				'slug',
+				'price',
+				'description',
+				'rating',
+				'inStock',
+				'createdAt',
+				'updatedAt',
+			]),
+		),
+		t.Object({
+			categories: t.Optional(t.Array(CategoryPlain.properties.id)),
+			desc: t.Optional(
+				tEnumsModel<Product>([
+					'name',
+					'slug',
+					'price',
+					'description',
+					'rating',
+					'inStock',
+					'createdAt',
+					'updatedAt',
+				]),
+			),
+			asc: t.Optional(
+				tEnumsModel<Product>([
+					'name',
+					'slug',
+					'price',
+					'description',
+					'rating',
+					'inStock',
+					'createdAt',
+					'updatedAt',
+				]),
+			),
+		}),
+	]),
 	create: t.Composite([
 		tPickModel(ProductPlain, ['name', 'slug', 'price', 'description', 'rating', 'inStock']),
 		t.Partial(

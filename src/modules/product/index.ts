@@ -10,17 +10,81 @@ import {
 	handlerCreateProduct,
 	handlerDeleteProduct,
 	handlerProduct,
-	handlerProductBySlug,
+	handlerProductPublic,
 	handlerProducts,
+	handlerProductsPublic,
 	handlerUpdateProduct,
 } from './service';
 
 export const ProductModules = new Elysia()
 	.use(jwtPlugin)
 	.get(
-		'/products',
+		'/products/public',
 		async ({ query }) => {
-			const result = await handlerProducts(query);
+			const result = await handlerProductsPublic(query);
+
+			return Response.json({
+				code: 'success',
+				message: 'Success retrieve data',
+				statusCode: 200,
+				data: result.data,
+				total: result.total,
+				skip: query.skip || 0,
+				limit: query.limit || 10,
+			} satisfies ResponseProductModelType['productsPublic']);
+		},
+		{
+			query: ProductModel.queriesPublic,
+			response: {
+				...errorPlugin.decorator.ctxError.model(),
+				200: ResponseProductModel.productsPublic,
+			},
+		},
+	)
+	.get(
+		'/products/public/:slug',
+		async ({ jwt, headers, params }) => {
+			await handlerJwtAuth(jwt.verify, {
+				bearerToken: headers.authorization,
+			});
+
+			const product = await handlerProductPublic(params.slug);
+
+			return Response.json({
+				code: 'success',
+				message: 'Success retrieve data',
+				statusCode: 200,
+				data: product,
+			} satisfies ResponseProductModelType['productPublic']);
+		},
+		{
+			params: t.Pick(ProductModel.params, ['slug']),
+			response: {
+				...errorPlugin.decorator.ctxError.model(),
+				200: ResponseProductModel.productPublic,
+			},
+			detail: {
+				security: [
+					{
+						bearerAuth: [],
+					},
+				],
+			},
+		},
+	)
+	.get(
+		'/products',
+		async ({ headers, jwt, query }) => {
+			const authUser = await handlerJwtAuth(jwt.verify, {
+				bearerToken: headers.authorization,
+				role: ['ADMIN', 'STAFF'],
+			});
+
+			const result = await handlerProducts({
+				...query,
+				authId: authUser.userId,
+				authRole: authUser.role,
+			});
 
 			return Response.json({
 				code: 'success',
@@ -37,6 +101,13 @@ export const ProductModules = new Elysia()
 			response: {
 				...errorPlugin.decorator.ctxError.model(),
 				200: ResponseProductModel.products,
+			},
+			detail: {
+				security: [
+					{
+						bearerAuth: [],
+					},
+				],
 			},
 		},
 	)
@@ -70,38 +141,6 @@ export const ProductModules = new Elysia()
 			response: {
 				...errorPlugin.decorator.ctxError.model(),
 				201: ResponseProductModel.product,
-			},
-			detail: {
-				security: [
-					{
-						bearerAuth: [],
-					},
-				],
-			},
-		},
-	)
-	.get(
-		'/products/slug/:slug',
-		async ({ jwt, headers, params }) => {
-			await handlerJwtAuth(jwt.verify, {
-				bearerToken: headers.authorization,
-			});
-
-			const product = await handlerProductBySlug(params.slug);
-
-			return Response.json({
-				code: 'success',
-				message: 'Success retrieve data',
-				statusCode: 200,
-				data: product,
-			} satisfies ResponseProductModelType['productBySlug']);
-		},
-		{
-			params: t.Pick(ProductModel.params, ['slug']),
-			query: ProductModel.query,
-			response: {
-				...errorPlugin.decorator.ctxError.model(),
-				200: ResponseProductModel.productBySlug,
 			},
 			detail: {
 				security: [

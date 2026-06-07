@@ -22,6 +22,7 @@ export const handlerCategories = async (
 			argsWhereOR.push({
 				[field]: {
 					contains: q,
+					mode: 'insensitive',
 				},
 			});
 		});
@@ -61,7 +62,7 @@ export const handlerCategories = async (
 		}
 	}
 
-	const args: Prisma.CategoryFindManyArgs = {
+	const args = {
 		take: limit || 10,
 		skip: skip || 0,
 		orderBy: argsOrderBy.length ? argsOrderBy : Prisma.skip,
@@ -71,7 +72,7 @@ export const handlerCategories = async (
 		},
 		...(Object.keys(argsSelect).length ? { select: argsSelect } : {}),
 		...(Object.keys(argsInclude).length ? { include: argsInclude } : {}),
-	};
+	} satisfies Prisma.CategoryFindManyArgs;
 
 	return {
 		data: await prisma.category.findMany(args),
@@ -108,13 +109,13 @@ export const handlerCategory = async (
 		}
 	}
 
-	const args: Prisma.CategoryFindUniqueOrThrowArgs = {
+	const args = {
 		where: {
 			id: recordId,
 		},
 		...(Object.keys(argsSelect).length ? { select: argsSelect } : {}),
 		...(Object.keys(argsInclude).length ? { include: argsInclude } : {}),
-	};
+	} satisfies Prisma.CategoryFindUniqueOrThrowArgs;
 
 	return await prisma.category.findUniqueOrThrow(args);
 };

@@ -1,4 +1,4 @@
-import { Prisma } from '#generated/prisma/client';
+import { Prisma, UserRole } from '#generated/prisma/client';
 import type { UserModel } from '#generated/prisma/models';
 import { prisma } from '#libs/prisma';
 import dayjs from '#utils/dayjs';
@@ -7,11 +7,16 @@ import { linkAsset, valueOrSkip } from '#utils/lib';
 import type { ProductModelType } from './model';
 import type { ResponseProductModelType } from './response.model';
 
+type QueryParamProducts = ProductModelType['queries'] & {
+	authId: string;
+	authRole: UserRole;
+};
+
 export const handlerProducts = async (
-	queryParams?: ProductModelType['queries'],
+	queryParams?: QueryParamProducts,
 ): Promise<Pick<ResponseProductModelType['products'], 'data' | 'total'>> => {
-	const { limit, skip, q, desc, asc, include, select, categories, userEmail, ...payload } =
-		queryParams || {};
+	const { limit, skip, q, desc, asc, include, select, categories, authId, authRole, ...payload } =
+		(queryParams || {}) as QueryParamProducts;
 
 	const argsWhereOR: Prisma.ProductWhereInput[] = [];
 	const argsOrderBy: Prisma.ProductOrderByWithRelationInput[] = [];
@@ -25,6 +30,7 @@ export const handlerProducts = async (
 			argsWhereOR.push({
 				[field]: {
 					contains: q,
+					mode: 'insensitive',
 				},
 			});
 		});
@@ -64,7 +70,7 @@ export const handlerProducts = async (
 		}
 	}
 
-	const args: Prisma.ProductFindManyArgs = {
+	const args = {
 		take: limit || 10,
 		skip: skip || 0,
 		orderBy: argsOrderBy.length ? argsOrderBy : Prisma.skip,
@@ -77,11 +83,6 @@ export const handlerProducts = async (
 			inStock: valueOrSkip(payload.inStock),
 			rating: valueOrSkip(payload.rating),
 			userId: valueOrSkip(payload.userId),
-			user: userEmail
-				? {
-						email: userEmail,
-					}
-				: Prisma.skip,
 			productCategories: categories?.length
 				? {
 						some: {
@@ -106,10 +107,139 @@ export const handlerProducts = async (
 		},
 		...(Object.keys(argsSelect).length ? { select: argsSelect } : {}),
 		...(Object.keys(argsInclude).length ? { include: argsInclude } : {}),
-	};
+	} satisfies Prisma.ProductFindManyArgs;
+
+	if (authRole !== 'ADMIN') {
+		args.where = {
+			...args.where,
+			userId: authId,
+		};
+	}
 
 	return {
 		data: await prisma.product.findMany(args),
+		total: await prisma.product.count({
+			where: args.where,
+		}),
+	};
+};
+
+export const handlerProductsPublic = async (
+	queryParams?: ProductModelType['queriesPublic'],
+): Promise<Pick<ResponseProductModelType['productsPublic'], 'data' | 'total'>> => {
+	const { limit, skip, q, desc, asc, categories, ...payload } = queryParams || {};
+
+	const argsWhereOR: Prisma.ProductWhereInput[] = [];
+	const argsOrderBy: Prisma.ProductOrderByWithRelationInput[] = [];
+
+	if (q) {
+		const searchFields: Prisma.ProductOrderByRelevanceFieldEnum[] = ['name', 'slug', 'description'];
+
+		searchFields.forEach((field) => {
+			argsWhereOR.push({
+				[field]: {
+					contains: q,
+					mode: 'insensitive',
+				},
+			});
+		});
+	}
+
+	if (desc?.length) {
+		desc.forEach((field) => {
+			argsOrderBy.push({
+				[field]: 'desc',
+			});
+		});
+	}
+
+	if (asc?.length) {
+		asc.forEach((field) => {
+			argsOrderBy.push({
+				[field]: 'asc',
+			});
+		});
+	}
+
+	const args = {
+		take: limit || 10,
+		skip: skip || 0,
+		orderBy: argsOrderBy.length ? argsOrderBy : Prisma.skip,
+		where: {
+			OR: argsWhereOR.length ? argsWhereOR : Prisma.skip,
+			name: valueOrSkip(payload.name),
+			slug: valueOrSkip(payload.slug),
+			price: valueOrSkip(payload.price),
+			description: valueOrSkip(payload.description),
+			inStock: valueOrSkip(payload.inStock),
+			rating: valueOrSkip(payload.rating),
+			productCategories: categories?.length
+				? {
+						some: {
+							categoryId: {
+								in: categories,
+							},
+						},
+					}
+				: Prisma.skip,
+			createdAt: payload.createdAt
+				? {
+						lte: dayjs(payload.createdAt).endOf('day').toDate(),
+						gte: dayjs(payload.createdAt).startOf('day').toDate(),
+					}
+				: Prisma.skip,
+			updatedAt: payload.updatedAt
+				? {
+						lte: dayjs(payload.updatedAt).endOf('day').toDate(),
+						gte: dayjs(payload.updatedAt).startOf('day').toDate(),
+					}
+				: Prisma.skip,
+		},
+		include: {
+			productThumbnails: {
+				select: {
+					asset: {
+						select: {
+							filename: true,
+							path: true,
+						},
+					},
+				},
+			},
+			productCategories: {
+				select: {
+					category: {
+						select: {
+							id: true,
+							name: true,
+						},
+					},
+				},
+			},
+		},
+		omit: {
+			id: true,
+			userId: true,
+		},
+	} satisfies Prisma.ProductFindManyArgs;
+
+	const products = await prisma.product.findMany(args);
+
+	return {
+		data: products.map((product) => {
+			const { productThumbnails, productCategories, ...record } = product;
+
+			const recordThumbnails = productThumbnails.map((thumbnail) =>
+				linkAsset(thumbnail.asset.path, thumbnail.asset.filename),
+			);
+			const recordCategories = productCategories.map((item) => item.category);
+
+			return {
+				...record,
+				thumbnails: recordThumbnails,
+				categories: recordCategories,
+			};
+		}),
 		total: await prisma.product.count({
 			where: args.where,
 		}),
@@ -143,20 +273,20 @@ export const handlerProduct = async (
 		}
 	}
 
-	const args: Prisma.ProductFindUniqueOrThrowArgs = {
+	const args = {
 		where: {
 			id: recordId,
 		},
 		...(Object.keys(argsSelect).length ? { select: argsSelect } : {}),
 		...(Object.keys(argsInclude).length ? { include: argsInclude } : {}),
-	};
+	} satisfies Prisma.ProductFindUniqueOrThrowArgs;
 
 	return await prisma.product.findUniqueOrThrow(args);
 };
 
-export const handlerProductBySlug = async (
+export const handlerProductPublic = async (
 	recordSlug: ProductModelType['params']['slug'],
-): Promise<ResponseProductModelType['productBySlug']['data']> => {
+): Promise<ResponseProductModelType['productPublic']['data']> => {
 	const { productThumbnails, productCategories, ...record } =
 		await prisma.product.findUniqueOrThrow({
 			where: {
@@ -185,6 +315,7 @@ export const handlerProductBySlug = async (
 				},
 			},
 			omit: {
+				id: true,
 				userId: true,
 			},
 		});

@@ -98,6 +98,13 @@ export const AssetModules = new Elysia()
 				...errorPlugin.decorator.ctxError.model(),
 				200: ResponseAssetModel.assets,
 			},
+			detail: {
+				security: [
+					{
+						bearerAuth: [],
+					},
+				],
+			},
 		},
 	)
 	.delete(

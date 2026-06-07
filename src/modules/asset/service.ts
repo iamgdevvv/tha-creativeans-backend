@@ -11,11 +11,6 @@ import dayjs from '#utils/dayjs';
 import type { AssetModelType } from './model';
 import type { ResponseAssetModelType } from './response.model';
 
-type QueryParamAssets = AssetModelType['queries'] & {
-	authId: string;
-	authRole: UserRole;
-};
-
 export const handerAsset = async (params: AssetModelType['params']) => {
 	const file = s3.file(params.filename, {
 		bucket: params.path,
@@ -28,6 +23,11 @@ export const handerAsset = async (params: AssetModelType['params']) => {
 	}
 
 	return file;
+};
+
+type QueryParamAssets = AssetModelType['queries'] & {
+	authId: string;
+	authRole: UserRole;
 };
 
 export const handlerAssets = async (
@@ -46,6 +46,7 @@ export const handlerAssets = async (
 			argsWhereOR.push({
 				[field]: {
 					contains: q,
+					mode: 'insensitive',
 				},
 			});
 		});
@@ -67,7 +68,7 @@ export const handlerAssets = async (
 		});
 	}
 
-	const args: Prisma.AssetFindManyArgs = {
+	const args = {
 		take: limit || 10,
 		skip: skip || 0,
 		orderBy: argsOrderBy.length ? argsOrderBy : Prisma.skip,
@@ -83,7 +84,7 @@ export const handlerAssets = async (
 					}
 				: Prisma.skip,
 		},
-	};
+	} satisfies Prisma.AssetFindManyArgs;
 
 	if (authRole !== 'ADMIN') {
 		args.where = {

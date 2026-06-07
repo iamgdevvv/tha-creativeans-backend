@@ -25,6 +25,7 @@ export const handlerUsers = async (
 			argsWhereOR.push({
 				[field]: {
 					contains: q,
+					mode: 'insensitive',
 				},
 			});
 		});
@@ -64,7 +65,7 @@ export const handlerUsers = async (
 		}
 	}
 
-	const args: Prisma.UserFindManyArgs = {
+	const args = {
 		take: limit || 10,
 		skip: skip || 0,
 		orderBy: argsOrderBy.length ? argsOrderBy : Prisma.skip,
@@ -89,7 +90,7 @@ export const handlerUsers = async (
 		},
 		...(Object.keys(argsSelect).length ? { select: argsSelect } : {}),
 		...(Object.keys(argsInclude).length ? { include: argsInclude } : {}),
-	};
+	} satisfies Prisma.UserFindManyArgs;
 
 	return {
 		data: await prisma.user.findMany(args),
@@ -126,13 +127,13 @@ export const handlerUser = async (
 		}
 	}
 
-	const args: Prisma.UserFindUniqueOrThrowArgs = {
+	const args = {
 		where: {
 			id: recordId,
 		},
 		...(Object.keys(argsSelect).length ? { select: argsSelect } : {}),
 		...(Object.keys(argsInclude).length ? { include: argsInclude } : {}),
-	};
+	} satisfies Prisma.UserFindUniqueOrThrowArgs;
 
 	return await prisma.user.findUniqueOrThrow(args);
 };
