@@ -1,5 +1,5 @@
 {
-	"name": "whconvertracker-server-bun",
+	"name": "creativeans-server-bun",
 	"version": "1.0.50",
 	"type": "module",
 	"module": "src/index.js",

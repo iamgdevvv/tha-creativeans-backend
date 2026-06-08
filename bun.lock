@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "whconvertracker-server-bun",
+      "name": "creativeans-server-bun",
       "dependencies": {
         "@elysia/cors": "^1.4.2",
         "@elysia/jwt": "^1.4.2",
